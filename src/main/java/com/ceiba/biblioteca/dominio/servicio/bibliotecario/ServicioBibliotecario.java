@@ -54,9 +54,6 @@ public class ServicioBibliotecario {
     }
 
     public boolean esPalindromo(String isbn) {
-
-        isbn = isbn.toLowerCase().replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o")
-                .replace("ú", "u").replace(" ", "").replace(".", "").replace(",", "");
         String cadenaInvertida = new StringBuilder(isbn).reverse().toString();
 
         return cadenaInvertida.equals(isbn);
