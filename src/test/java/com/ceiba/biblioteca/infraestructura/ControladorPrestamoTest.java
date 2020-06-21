@@ -29,6 +29,7 @@ public class ControladorPrestamoTest {
     public static final String ISBN_LIBRO_AD5130 = "AD5130";
     public static final String ISBN_LIBRO_PD1023 = "PD1023";
     public static final String ISBN_LIBRO_12421 = "12421";
+    public static final String ISBN_LIBRO_AD1030 = "AD1030";
     public static final String NOMBRE_CLIENTE_PEDRO = "PEDRO";
 
     @Autowired
@@ -102,5 +103,15 @@ public class ControladorPrestamoTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getPrestamoPorIsbnNoRegistrado() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                .get("/prestamos/{isbn}", ISBN_LIBRO_AD1030)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof PrestamoException));
     }
 }

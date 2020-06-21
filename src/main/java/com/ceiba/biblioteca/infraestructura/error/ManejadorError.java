@@ -1,5 +1,6 @@
 package com.ceiba.biblioteca.infraestructura.error;
 
+import com.ceiba.biblioteca.dominio.excepcion.LibroException;
 import com.ceiba.biblioteca.dominio.excepcion.PrestamoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class ManejadorError extends ResponseEntityExceptionHandler {
 
     public ManejadorError() {
         CODIGOS_ESTADO.put(PrestamoException.class.getSimpleName(), HttpStatus.BAD_REQUEST.value());
+        CODIGOS_ESTADO.put(LibroException.class.getSimpleName(), HttpStatus.BAD_REQUEST.value());
         //en caso de tener otra excepcion matricularla aca
     }
 

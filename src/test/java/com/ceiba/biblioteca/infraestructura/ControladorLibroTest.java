@@ -1,6 +1,7 @@
 package com.ceiba.biblioteca.infraestructura;
 
 import com.ceiba.biblioteca.aplicacion.comando.ComandoLibro;
+import com.ceiba.biblioteca.dominio.excepcion.LibroException;
 import com.ceiba.biblioteca.testdatabuilder.LibroTestDataBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -23,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ControladorLibroTest {
 
     public static final String ISBN_LIBRO_PD1023 = "PD1023";
+    public static final String ISBN_LIBRO_AD1030 = "AD1030";
     public static final String ISBN_LIBRO_1234 = "1234";
 
     @Autowired
@@ -42,6 +45,16 @@ public class ControladorLibroTest {
     }
 
     @Test
+    public void getLibroPorIsbnNoRegistrado() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                .get("/libros/{isbn}", ISBN_LIBRO_AD1030)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof LibroException));
+    }
+
+    @Test
     public void crearLibro() throws Exception {
         ComandoLibro comandoLibro = new LibroTestDataBuilder().buildComando();
         mvc.perform(MockMvcRequestBuilders
@@ -57,5 +70,18 @@ public class ControladorLibroTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isbn").value(ISBN_LIBRO_1234));
+    }
+
+    @Test
+    public void crearLibroRegistrado() throws Exception {
+        ComandoLibro comandoLibro = new LibroTestDataBuilder().conisbn(ISBN_LIBRO_PD1023).buildComando();
+        mvc.perform(MockMvcRequestBuilders
+                .post("/libros")
+                .content(objectMapper.writeValueAsString(comandoLibro))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof LibroException));
     }
 }
