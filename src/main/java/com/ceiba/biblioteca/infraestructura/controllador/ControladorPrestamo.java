@@ -9,14 +9,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/prestamos")
 public class ControladorPrestamo {
     private final ManejadorObtenerPrestamo manejadorObtenerPrestamo;
+    private final ManejadorGenerarPrestamo manejadorGenerarPrestamo;
 
-    public ControladorPrestamo(ManejadorObtenerPrestamo manejadorObtenerPrestamo) {
+    public ControladorPrestamo(ManejadorObtenerPrestamo manejadorObtenerPrestamo, ManejadorGenerarPrestamo manejadorGenerarPrestamo) {
         this.manejadorObtenerPrestamo = manejadorObtenerPrestamo;
+        this.manejadorGenerarPrestamo = manejadorGenerarPrestamo;
     }
 
     @PostMapping("/{isbn}/{nombreCliente}")
-    public void prestar(@PathVariable(name = "isbn") String isbn) {
-        throw new UnsupportedOperationException("Método pendiente por implementar");
+    public void prestar(@PathVariable(name = "isbn") String isbn, @PathVariable(name = "nombreCliente") String nombreCliente) {
+        this.manejadorGenerarPrestamo.ejecutar(isbn, nombreCliente);
     }
 
     @GetMapping("/{isbn}")
