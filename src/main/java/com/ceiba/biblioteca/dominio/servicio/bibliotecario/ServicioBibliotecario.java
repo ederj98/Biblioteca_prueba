@@ -18,6 +18,7 @@ public class ServicioBibliotecario {
     public static final String EL_LIBRO_NO_EXISTE = "El libro con el isbn ingresado no se encuentra registrado";
     public static final String EL_LIBRO_ES_PALINDROMO = "Los libros palíndromos solo se pueden utilizar en la biblioteca";
     public static final int NUMERO_DIAS_DEVOLUCION_MAXIMO = 14;
+    public static final int SUMATORIA_MAXIMA_DIGITOS_NUMERICOS_ISBN = 30;
 
     private final RepositorioLibro repositorioLibro;
     private final RepositorioPrestamo repositorioPrestamo;
@@ -66,7 +67,7 @@ public class ServicioBibliotecario {
             if (Character.isDigit(valor))
                 sumatoria += Integer.parseInt(String.valueOf(valor));
         }
-        if (sumatoria > 30) {
+        if (sumatoria > SUMATORIA_MAXIMA_DIGITOS_NUMERICOS_ISBN) {
             return calcularSumatoriaDiasFecha(NUMERO_DIAS_DEVOLUCION_MAXIMO);
         } else {
             return null;
