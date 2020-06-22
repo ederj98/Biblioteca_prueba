@@ -17,7 +17,7 @@ public class ServicioBibliotecario {
     public static final String EL_LIBRO_NO_SE_ENCUENTRA_DISPONIBLE = "El libro no se encuentra disponible";
     public static final String EL_LIBRO_NO_EXISTE = "El libro con el isbn ingresado no se encuentra registrado";
     public static final String EL_LIBRO_ES_PALINDROMO = "Los libros palíndromos solo se pueden utilizar en la biblioteca";
-    public static final int NUMERO_DIAS_DEVOLUCION_MAXIMO = 14;
+    public static final int NUMERO_DIAS_DEVOLUCION_MAXIMO = 15;
     public static final int SUMATORIA_MAXIMA_DIGITOS_NUMERICOS_ISBN = 30;
 
     private final RepositorioLibro repositorioLibro;
@@ -28,6 +28,11 @@ public class ServicioBibliotecario {
         this.repositorioPrestamo = repositorioPrestamo;
     }
 
+    /**
+     * Metodo que permite realizar el prestamo de un libro
+     * @param isbn
+     * @param nombreUsuario
+     */
     public void prestar(String isbn, String nombreUsuario) {
         if (esLibro(isbn)) {
             if(esPrestado(isbn)) {
@@ -46,20 +51,42 @@ public class ServicioBibliotecario {
         }
     }
 
+    /**
+     * Metodo que valida si un libro ya ha sido prestado.
+     * @param isbn
+     * @return boolean
+     */
     public boolean esPrestado(String isbn) {
         return this.repositorioPrestamo.obtenerLibroPrestadoPorIsbn(isbn) != null ? true : false;
     }
 
+    /**
+     * Metodo que valida si el libro con el isbn ingresado se encuentra registrado.
+     * @param isbn
+     * @return boolean
+     */
     public boolean esLibro(String isbn) {
         return this.repositorioLibro.obtenerPorIsbn(isbn) != null ? true : false;
     }
 
+    /**
+     * Metodo que valida si un isbn es o no palindromo.
+     * @param isbn
+     * @return boolean
+     */
     public boolean esPalindromo(String isbn) {
         String cadenaInvertida = new StringBuilder(isbn).reverse().toString();
 
         return cadenaInvertida.equals(isbn);
     }
 
+    /**
+     * Metodo que permite calcular la fecha de entrega maxima para devolver un libro
+     * una vez prestado si la sumatoria de los digitos que componen al isbn suministrado
+     * es mayor a SUMATORIA_MAXIMA_DIGITOS_NUMERICOS_ISBN
+     * @param isbn
+     * @return Date
+     */
     public Date calcularFechaEntregaMaxima(String isbn) {
         char [] cadenaIsbn = isbn.toCharArray();
         int sumatoria = 0;
@@ -74,12 +101,22 @@ public class ServicioBibliotecario {
         }
     }
 
+    /**
+     * Metodo que permite calcular la fecha de entrega maxima para devolver un libro
+     * una vez prestado con base al parametro NUMERO_DIAS_DEVOLUCION_MAXIMO, omitiendo los domingos.
+     * @param dias
+     * @return Date
+     */
     public Date calcularSumatoriaDiasFecha(int dias) {
         LocalDate fechaEntregaMaxima = LocalDate.now();
-        int contadorDias = 0;
+        if (fechaEntregaMaxima.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            fechaEntregaMaxima = fechaEntregaMaxima.plusDays(1);
+        }
+
+        int contadorDias = 1;
         while (contadorDias < dias) {
             fechaEntregaMaxima = fechaEntregaMaxima.plusDays(1);
-            if (!(fechaEntregaMaxima.getDayOfWeek() == DayOfWeek.SUNDAY)) {
+            if (fechaEntregaMaxima.getDayOfWeek() != DayOfWeek.SUNDAY) {
                 ++contadorDias;
             }
         }
